@@ -1,0 +1,61 @@
+import heapq
+
+def astar(graph, heuristic, start, goal):
+
+    pq = []
+    heapq.heappush(pq, (heuristic[start], 0, start))
+
+    parent = {}
+    cost = {start: 0}
+
+    while pq:
+        f, g, node = heapq.heappop(pq)
+
+        if node == goal:
+            path = []
+            while node in parent:
+                path.append(node)
+                node = parent[node]
+
+            path.append(start)
+            path.reverse()
+
+            print("Path:", path)
+            print("Cost:", g)
+            return
+
+        for neighbour, weight in graph[node]:
+
+            new_cost = g + weight
+
+            if neighbour not in cost or new_cost < cost[neighbour]:
+
+                cost[neighbour] = new_cost
+                parent[neighbour] = node
+
+                f = new_cost + heuristic[neighbour]
+
+                heapq.heappush(pq, (f, new_cost, neighbour))
+
+    print("No path found")
+
+
+graph = {
+    'A': [('B', 1), ('C', 4)],
+    'B': [('D', 2), ('E', 5)],
+    'C': [('E', 1)],
+    'D': [('G', 5)],
+    'E': [('G', 3)],
+    'G': []
+}
+
+heuristic = {
+    'A': 7,
+    'B': 6,
+    'C': 4,
+    'D': 4,
+    'E': 2,
+    'G': 0
+}
+
+astar(graph, heuristic, 'A', 'G')
